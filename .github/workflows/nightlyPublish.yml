@@ -158,10 +158,18 @@ jobs:
           repository: 'ExpressLRS/ExpressLRS-Configurator'
           ref: 'master'
 
+      - name: Checkout git repo
+        uses: actions/checkout@v2
+        with:
+          path: 'nightlyRepo'
+
       - name: Install Node, NPM and Yarn
         uses: actions/setup-node@v1
         with:
           node-version: 14.17.6
+
+      - name: Copy assets files
+        run: npx cpr nightlyRepo/assets assets -o
 
       - name: Change version in src/package.json
         uses: actions/github-script@v5
@@ -169,6 +177,7 @@ jobs:
           script: |
             let pkg = require('./src/package.json');
             pkg.version = '${{needs.create-draft-release.outputs.version}}';
+            pkg.productName = 'ExpressLRS Configurator Nightly';
             require('fs').writeFileSync('src/package.json', JSON.stringify(pkg, null, 2));
 
       - name: Change owner and repo in package.json
@@ -178,6 +187,9 @@ jobs:
             let pkg = require('./package.json');
             pkg.build.publish.owner = context.repo.owner;
             pkg.build.publish.repo = context.repo.repo;
+            pkg.productName = 'ExpressLRS Configurator Nightly';
+            pkg.build.productName = 'ExpressLRS Configurator Nightly';
+            pkg.build.appId = 'org.expresslrs.configurator.nightly';
             require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));
 
       - name: Get yarn cache directory path
