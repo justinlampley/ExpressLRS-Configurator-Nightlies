@@ -215,7 +215,7 @@ jobs:
           yarn install --prefer-offline --network-timeout 180000
 
       - name: Publish Windows releases
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2019'
         shell: powershell
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
